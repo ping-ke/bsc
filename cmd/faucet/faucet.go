@@ -525,7 +525,7 @@ func (f *faucet) apiHandler(w http.ResponseWriter, r *http.Request) {
 		)
 		if timeout = f.timeouts[id]; time.Now().After(timeout) {
 			var tx *types.Transaction
-			if msg.Symbol == "BNB" {
+			if msg.Symbol == "W3Q" {
 				// User wasn't funded recently, create the funding transaction
 				amount := new(big.Int).Mul(big.NewInt(int64(*payoutFlag)), ether)
 				amount = new(big.Int).Mul(amount, new(big.Int).Exp(big.NewInt(5), big.NewInt(int64(msg.Tier)), nil))
