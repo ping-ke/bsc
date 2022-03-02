@@ -175,14 +175,11 @@ func main() {
 		log.Crit("Failed to parse genesis config", "err", err)
 	}
 	// Convert the bootnodes to internal enode representations
-	var enodes []*enode.Node
-	for _, boot := range strings.Split(*bootFlag, ",") {
-		if url, err := enode.Parse(enode.ValidSchemes, boot); err == nil {
-			enodes = append(enodes, url)
-		} else {
-			log.Error("Failed to parse bootnode URL", "url", boot, "err", err)
-		}
+	enodes, err := getBootNodes(bootFlag, *goerliFlag, *rinkebyFlag)
+	if err != nil {
+		log.Crit("Failed to parse bootFlag config", "err", err)
 	}
+
 	// Load up the account key and decrypt its password
 	blob, err := ioutil.ReadFile(*accPassFlag)
 	if err != nil {
@@ -949,7 +946,7 @@ func authNoAuth(url string) (string, string, common.Address, error) {
 // getGenesis returns a genesis based on input args
 func getGenesis(genesisFlag *string, goerliFlag bool, rinkebyFlag bool) (*core.Genesis, error) {
 	switch {
-	case genesisFlag != nil:
+	case genesisFlag != nil && *genesisFlag != "":
 		var genesis core.Genesis
 		err := common.LoadJSON(*genesisFlag, &genesis)
 		return &genesis, err
@@ -960,4 +957,29 @@ func getGenesis(genesisFlag *string, goerliFlag bool, rinkebyFlag bool) (*core.G
 	default:
 		return nil, fmt.Errorf("no genesis flag provided")
 	}
+}
+
+// getGenesis returns a genesis based on input args
+func getBootNodes(bootFlag *string, goerliFlag bool, rinkebyFlag bool) ([]*enode.Node, error) {
+	var enodes []*enode.Node
+	var nodeStrs []string
+	switch {
+	case bootFlag != nil && *bootFlag != "":
+		nodeStrs = strings.Split(*bootFlag, ",")
+	case goerliFlag:
+		nodeStrs = params.GoerliBootnodes
+	case rinkebyFlag:
+		nodeStrs = params.RinkebyBootnodes
+	default:
+		return nil, fmt.Errorf("no boot node flag provided")
+	}
+
+	for _, boot := range nodeStrs {
+		if url, err := enode.Parse(enode.ValidSchemes, boot); err == nil {
+			enodes = append(enodes, url)
+		} else {
+			log.Error("Failed to parse bootnode URL", "url", boot, "err", err)
+		}
+	}
+	return enodes, nil
 }
