@@ -5,11 +5,16 @@
         "eip150Block": 0,
         "eip155Block": 0,
         "eip158Block": 0,
-        "byzantiumBlock": 0
+        "byzantiumBlock": 0,
+        "daoForkSupport": true,
+        "clique": {
+            "period": 6,
+            "epoch": 100800
+        }
     },
     "nonce": "0x0",
     "timestamp": "0x6205a509",
-    "extraData": "0x57656c636f6d6520746f206272617665206e6577205765623321",
+    "extraData": "0x57656c636f6d6520746f20746865206272617665206e65772057656233512121dc0c84b6e563e7a4cc54d2b0aa99cf18a372f76edcfa418856cfb2695734ce7535bf79b2eb4261bd0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
     "gasLimit": "0x1c9c380",
     "difficulty": "0x1",
     "alloc": {
